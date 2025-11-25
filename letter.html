@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>magic</title>
+<style>
+  /* Prevent any scroll */
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ffcce6 0%, #ff99cc 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  /* Container for all pages */
+  .pages-container {
+    position: relative;
+    width: 100%;
+    height: calc(100% - 200px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  /* Container for each page */
+  .page {
+    display: none; /* hidden by default */
+    width: 95%;
+    max-width: 400px;
+    min-height: 250px;
+    border: 5px solid #fff;
+    border-radius: 15px;
+    background: linear-gradient(145deg, #ffffff, #fff5f9);
+    overflow: hidden;
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 10px 25px rgba(255, 105, 180, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 20px;
+  }
+
+  .page:hover {
+    transform: translate(-50%, -50%) scale(1.02);
+    box-shadow: 0 15px 30px rgba(255, 105, 180, 0.4);
+  }
+
+  /* Last page - no container */
+  .page.last-page {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    display: none;
+    padding: 0;
+  }
+
+  .page.last-page:hover {
+    transform: translate(-50%, -50%);
+    box-shadow: none;
+  }
+
+  /* Visible page */
+  .page.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+  }
+
+  .page.last-page.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Text content */
+  .page-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+    text-align: left;
+  }
+
+  /* Navigation buttons container */
+  .container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 25px;
+  }
+
+  /* Navigation buttons style */
+  .button1, .button2 {
+    width: 140px;
+    height: 80px;
+    background: linear-gradient(to bottom, #ff66b2, #ff3385);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 60px;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(255, 102, 178, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .button1::after, .button2::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.2), rgba(255,255,255,0));
+    border-radius: 20px;
+  }
+
+  .button1:hover, .button2:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 102, 178, 0.6);
+    background: linear-gradient(to bottom, #ff3385, #ff0066);
+  }
+
+  .button1:active, .button2:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 10px rgba(255, 102, 178, 0.4);
+  }
+
+  /* Proceed button for last page */
+  .proceed-button {
+    width: 220px;
+    height: 70px;
+    background: linear-gradient(to bottom, #ff66b2, #ff3385);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(255, 102, 178, 0.4);
+    transition: all 0.3s ease;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .proceed-button:hover {
+    transform: translate(-50%, -50%) translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 102, 178, 0.6);
+    background: linear-gradient(to bottom, #ff3385, #ff0066);
+  }
+
+  .proceed-button:active {
+    transform: translate(-50%, -50%) translateY(0);
+    box-shadow: 0 3px 10px rgba(255, 102, 178, 0.4);
+  }
+
+  /* Page indicator */
+  .page-indicator {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+  }
+
+  .indicator-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .indicator-dot.active {
+    background-color: white;
+    transform: scale(1.2);
+  }
+
+  /* Floating hearts background */
+  .hearts-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .heart {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background-color: #ff66b2;
+    opacity: 0.7;
+    animation: float 6s linear infinite;
+  }
+
+  .heart::before, .heart::after {
+    content: '';
+    width: 15px;
+    height: 15px;
+    background-color: #ff66b2;
+    border-radius: 50%;
+    position: absolute;
+  }
+
+  .heart::before {
+    top: -7.5px;
+    left: 0;
+  }
+
+  .heart::after {
+    top: 0;
+    left: -7.5px;
+  }
+
+  .heart:nth-child(2n) {
+    animation-duration: 8s;
+    background-color: #ff99cc;
+  }
+
+  .heart:nth-child(3n) {
+    animation-duration: 10s;
+    background-color: #ff4d94;
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(100vh) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.7;
+    }
+    90% {
+      opacity: 0.7;
+    }
+    100% {
+      transform: translateY(-100px) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  /* Mobile-specific adjustments */
+  @media (max-width: 480px) {
+    .pages-container {
+      height: calc(100% - 180px);
+    }
+    
+    .page {
+      width: 92%;
+      padding: 15px;
+      min-height: 200px;
+    }
+    
+    .page-text {
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    
+    .container {
+      height: 180px;
+      padding: 0 20px;
+    }
+    
+    .button1, .button2 {
+      width: 120px;
+      height: 70px;
+      font-size: 50px;
+      border-radius: 15px;
+    }
+    
+    .proceed-button {
+      width: 200px;
+      height: 65px;
+      font-size: 18px;
+    }
+    
+    .page-indicator {
+      bottom: 10px;
+    }
+  }
+
+  @media (max-width: 320px) {
+    .page {
+      padding: 12px;
+    }
+    
+    .page-text {
+      font-size: 14px;
+    }
+    
+    .button1, .button2 {
+      width: 100px;
+      height: 60px;
+      font-size: 45px;
+    }
+    
+    .proceed-button {
+      width: 180px;
+      height: 60px;
+      font-size: 16px;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Floating hearts background -->
+  <div class="hearts-container" id="heartsContainer"></div>
+
+  <div class="pages-container">
+    <!-- Page 1 -->
+    <div id="page1" class="page active">
+      <div class="page-text">
+        <p>SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!</p>
+      </div>
+    </div>
+
+    <!-- Page 2 -->
+    <div id="page2" class="page">
+      <div class="page-text">
+        <p>SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!</p>
+      </div>
+    </div>
+
+    <!-- Page 3 -->
+    <div id="page3" class="page">
+      <div class="page-text">
+        <p>SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!</p>
+      </div>
+    </div>
+
+    <!-- Page 4 -->
+    <div id="page4" class="page">
+      <div class="page-text">
+        <p>SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!</p>
+      </div>
+    </div>
+
+    <!-- Page 5 -->
+    <div id="page5" class="page">
+      <div class="page-text">
+        <p>SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!</p>
+      </div>
+    </div>
+
+    <!-- Page 6 -->
+    <div id="page6" class="page">
+      <div class="page-text">
+        <p>SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!SUBUKAN MO LANG TO ILEAK! SUBUKAN MO LANG TO ILEAK!</p>
+      </div>
+    </div>
+
+    <!-- Page 7 - Last page with no container, just button -->
+    <div id="page7" class="page last-page">
+      <!-- No text content, just the proceed button -->
+    </div>
+  </div>
+
+  <!-- Page indicator -->
+  <div class="page-indicator">
+    <div class="indicator-dot active" data-page="1"></div>
+    <div class="indicator-dot" data-page="2"></div>
+    <div class="indicator-dot" data-page="3"></div>
+    <div class="indicator-dot" data-page="4"></div>
+    <div class="indicator-dot" data-page="5"></div>
+    <div class="indicator-dot" data-page="6"></div>
+    <div class="indicator-dot" data-page="7"></div>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <div class="container">
+    <button class="button1" onclick="prevPage()">&lt;</button>
+    <button class="button2" onclick="nextPage()">&gt;</button>
+  </div>
+
+  <!-- Proceed Button (only shown on last page) -->
+  <button class="proceed-button" onclick="proceedToNext()">Proceed to Next</button>
+
+<script>
+  let currentPage = 1;
+  const totalPages = 7;
+
+  function showPage(page) {
+    if(page < 1 || page > totalPages) return;
+    // Hide all pages
+    for(let i = 1; i <= totalPages; i++) {
+      document.getElementById('page' + i).classList.remove('active');
+    }
+    // Show current page
+    document.getElementById('page' + page).classList.add('active');
+    currentPage = page;
+    
+    // Update page indicator
+    document.querySelectorAll('.indicator-dot').forEach(dot => {
+      dot.classList.remove('active');
+    });
+    document.querySelector(`.indicator-dot[data-page="${page}"]`).classList.add('active');
+    
+    // Show/hide proceed button on last page
+    const proceedButton = document.querySelector('.proceed-button');
+    if(page === totalPages) {
+      proceedButton.style.display = 'flex';
+    } else {
+      proceedButton.style.display = 'none';
+    }
+  }
+
+  function prevPage() {
+    if(currentPage === 1) {
+      alert("Can't go back! This is the first page.");
+    } else {
+      showPage(currentPage - 1);
+    }
+  }
+
+  function nextPage() {
+    if(currentPage === totalPages) {
+      // Already on last page, proceed button will handle navigation
+    } else {
+      showPage(currentPage + 1);
+    }
+  }
+
+  function proceedToNext() {
+    // Redirect to another HTML page
+    window.location.href = 'end.html';
+  }
+
+  // Add click event to page indicators
+  document.querySelectorAll('.indicator-dot').forEach(dot => {
+    dot.addEventListener('click', function() {
+      const pageNum = parseInt(this.getAttribute('data-page'));
+      showPage(pageNum);
+    });
+  });
+
+  // Create floating hearts
+  function createHearts() {
+    const heartsContainer = document.getElementById('heartsContainer');
+    const heartCount = 12;
+    
+    for (let i = 0; i < heartCount; i++) {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      
+      // Random position
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDelay = Math.random() * 5 + 's';
+      
+      heartsContainer.appendChild(heart);
+    }
+  }
+
+  // Initialize
+  window.onload = function() {
+    createHearts();
+    // Hide proceed button initially
+    document.querySelector('.proceed-button').style.display = 'none';
+  };
+</script>
+
+</body>
+</html>

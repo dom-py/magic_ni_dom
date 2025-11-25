@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>username</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ffcce6 0%, #ff99cc 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      color: #8a1c5a;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(255, 105, 180, 0.3);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      transition: all 0.3s ease;
+      z-index: 10;
+      position: relative;
+      gap: 15px;
+    }
+
+    h2 {
+      font-size: 2.2rem;
+      color: #d63384;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      margin-bottom: 10px;
+    }
+
+    .inputBox {
+      display: flex;
+      gap: 10px;
+      margin: 15px 0;
+      justify-content: center;
+    }
+
+    input {
+      padding: 12px 15px;
+      border: 2px solid #ff99cc;
+      border-radius: 50px;
+      width: 70%;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s;
+      background-color: #fff9fc;
+    }
+
+    input:focus {
+      border-color: #ff66b2;
+      box-shadow: 0 0 0 3px rgba(255, 102, 178, 0.3);
+    }
+
+    button {
+      padding: 12px 25px;
+      background: linear-gradient(to right, #ff66b2, #ff3385);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s;
+      box-shadow: 0 4px 10px rgba(255, 102, 178, 0.4);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(255, 102, 178, 0.5);
+      background: linear-gradient(to right, #ff3385, #ff0066);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .messageBox {
+      padding: 20px;
+      border-radius: 15px;
+      width: 100%;
+      text-align: center;
+      display: none;
+      animation: fadeIn 0.5s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #errorBox {
+      background: linear-gradient(to right, #ffcccc, #ffb3b3);
+      border: 2px solid #ff6666;
+      color: #cc0000;
+    }
+
+    #successBox {
+      background: linear-gradient(to right, #ccffcc, #b3ffb3);
+      border: 2px solid #66cc66;
+      color: #006600;
+    }
+
+    .messageBox img {
+      width: 100%;
+      max-width: 300px;
+      margin-top: 15px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Loading screen styles */
+    .loading-section {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    #loadingImageContainer {
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    #loadingImageContainer img {
+      width: 100%;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    #loadingScreen {
+      width: 100%;
+      height: 50px;
+      border: 2px solid #ff99cc;
+      border-radius: 50px;
+      overflow: hidden;
+      position: relative;
+      background-color: #ffe6f2;
+      margin-top: 5px;
+    }
+
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #ff66b2, #ff3385);
+      text-align: center;
+      color: white;
+      line-height: 50px;
+      font-weight: bold;
+      transition: width 0.3s ease;
+      border-radius: 50px;
+      font-size: 16px;
+    }
+
+    /* Welcome message styles */
+    #welcomeMessage {
+      display: none;
+      font-size: 2.5rem;
+      color: #ff3385;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      animation: welcomeFadeIn 1s ease;
+      margin: 10px 0;
+    }
+
+    @keyframes welcomeFadeIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Spiral Loading Screen */
+    #spiralLoading {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #ffcce6 0%, #ff99cc 100%);
+      z-index: 100;
+    }
+
+    .spiral {
+      width: 80px;
+      height: 80px;
+      border: 4px solid transparent;
+      border-top: 4px solid #ff3385;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      position: relative;
+    }
+
+    .spiral::before {
+      content: '';
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      right: 5px;
+      bottom: 5px;
+      border: 4px solid transparent;
+      border-top: 4px solid #ff66b2;
+      border-radius: 50%;
+      animation: spin 2s linear infinite reverse;
+    }
+
+    .spiral::after {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      right: 15px;
+      bottom: 15px;
+      border: 4px solid transparent;
+      border-top: 4px solid #ff99cc;
+      border-radius: 50%;
+      animation: spin 1.5s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: #d63384;
+      font-weight: 600;
+    }
+
+    /* Flower bloom styles */
+    #flowerContainer {
+      position: relative;
+      width: 180px;
+      height: 240px;
+      margin: 10px auto;
+      display: none;
+    }
+
+    .flower-petal {
+      position: absolute;
+      width: 45px;
+      height: 70px;
+      background: linear-gradient(to bottom, #ff66b2, #ff3385);
+      border-radius: 50%;
+      opacity: 0;
+      top: 40px;
+      left: 67.5px;
+      transform-origin: center bottom;
+      box-shadow: 0 0 8px rgba(255, 102, 178, 0.5);
+    }
+
+    .flower-center {
+      position: absolute;
+      top: 110px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 35px;
+      height: 35px;
+      background: radial-gradient(circle, #ffcc00, #ff9900);
+      border-radius: 50%;
+      opacity: 0;
+      box-shadow: 0 0 15px rgba(255, 204, 0, 0.8);
+      z-index: 10;
+      border: 2px solid #ff9900;
+    }
+
+    .flower-stem {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 0;
+      background: linear-gradient(to top, #66cc66, #339933);
+      border-radius: 5px;
+    }
+
+    /* Animation for flower center */
+    @keyframes pulse-center {
+      0% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.1); }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    .pulse {
+      animation: pulse-center 2s infinite;
+    }
+
+    .floating {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    /* SVG hearts styles */
+    .hearts-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .svg-heart {
+      position: absolute;
+      animation: fall linear forwards;
+      filter: drop-shadow(0 0 2px rgba(255, 105, 180, 0.3));
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts-container" id="heartsContainer"></div>
+  
+  <!-- Main Username Checker -->
+  <div class="container" id="mainContainer">
+    <h2 class="floating">what's your name?</h2>
+
+    <div class="inputBox" id="inputBox">
+      <input type="text" id="username" placeholder="Type username..." />
+      <button onclick="checkUser()">Submit</button>
+    </div>
+
+    <!-- Error section -->
+    <div id="errorBox" class="messageBox">
+      <p id="errorMsg"></p>
+      <img id="errorImg" src="https://media1.tenor.com/m/nb5wfv9EcJIAAAAC/argh-snoopy.gif" alt="Error Image" />
+    </div>
+
+    <!-- Success section -->
+    <div id="successBox" class="messageBox">
+      <p id="successMsg"></p>
+      <img id="successImg" src="https://media1.tenor.com/m/Vv0sQuf90sIAAAAC/snoopy.gif" alt="Success Image" />
+    </div>
+
+    <!-- Loading section -->
+    <div class="loading-section" id="loadingSection">
+      <div id="loadingImageContainer"></div>
+      <div id="loadingScreen">
+        <div id="progressBar">0%</div>
+      </div>
+    </div>
+
+    <!-- Welcome message -->
+    <div id="welcomeMessage"></div>
+
+    <!-- Flower bloom container -->
+    <div id="flowerContainer">
+      <div class="flower-stem"></div>
+      <div class="flower-center"></div>
+    </div>
+  </div>
+
+  <!-- Spiral Loading Screen -->
+  <div id="spiralLoading">
+    <div class="spiral"></div>
+    <div class="loading-text">Loading...</div>
+  </div>
+
+  <script>
+    // SVG heart path
+    const heartPath = "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z";
+
+    // Create floating hearts
+    function createHearts() {
+      const heartsContainer = document.getElementById('heartsContainer');
+      const heartCount = 100;
+      
+      for (let i = 0; i < heartCount; i++) {
+        createSingleHeart();
+      }
+    }
+    
+    // Create a single heart
+    function createSingleHeart() {
+      const heartsContainer = document.getElementById('heartsContainer');
+      
+      // Create SVG element
+      const svgNS = "http://www.w3.org/2000/svg";
+      const heartSvg = document.createElementNS(svgNS, "svg");
+      heartSvg.classList.add("svg-heart");
+      
+      // Set SVG attributes
+      const size = Math.random() * 30 + 15;
+      heartSvg.setAttribute("width", size);
+      heartSvg.setAttribute("height", size);
+      heartSvg.setAttribute("viewBox", "0 0 24 24");
+      
+      // Create path for heart shape
+      const path = document.createElementNS(svgNS, "path");
+      path.setAttribute("d", heartPath);
+      
+      // Random pink color with adjustable opacity
+      const opacity = Math.random() * 0.7 + 0.3;
+      const pinkShades = ["#ff66b2", "#ff3385", "#ff99cc", "#ff4d94", "#ff80b3"];
+      const randomColor = pinkShades[Math.floor(Math.random() * pinkShades.length)];
+      
+      path.setAttribute("fill", randomColor);
+      path.setAttribute("opacity", opacity);
+      
+      // Add path to SVG
+      heartSvg.appendChild(path);
+      
+      // Random position across the width
+      const leftPos = Math.random() * 100;
+      heartSvg.style.left = leftPos + 'vw';
+      
+      // Start from top (above the viewport)
+      heartSvg.style.top = '-50px';
+      
+      // Random animation duration
+      const duration = Math.random() * 8 + 6;
+      heartSvg.style.animationDuration = duration + 's';
+      
+      // Random delay
+      const delay = Math.random() * 5;
+      heartSvg.style.animationDelay = delay + 's';
+      
+      heartsContainer.appendChild(heartSvg);
+      
+      // Remove heart after animation completes and create a new one
+      setTimeout(() => {
+        heartSvg.remove();
+        createSingleHeart();
+      }, (duration + delay) * 1000);
+    }
+
+    // Create flower petals
+    function createFlowerPetals() {
+      const flowerContainer = document.getElementById('flowerContainer');
+      const petalCount = 8;
+      
+      // Clear any existing petals
+      const existingPetals = flowerContainer.querySelectorAll('.flower-petal');
+      existingPetals.forEach(petal => petal.remove());
+      
+      // Create new petals
+      for (let i = 0; i < petalCount; i++) {
+        const petal = document.createElement('div');
+        petal.classList.add('flower-petal');
+        
+        // Position petals in a circle around the center
+        const angle = (360 / petalCount) * i;
+        petal.style.transform = `rotate(${angle}deg)`;
+        
+        flowerContainer.appendChild(petal);
+      }
+    }
+
+    // Animate flower bloom
+    function bloomFlower() {
+      const flowerContainer = document.getElementById('flowerContainer');
+      const flowerCenter = document.querySelector('.flower-center');
+      const flowerStem = document.querySelector('.flower-stem');
+      
+      // Create petals first
+      createFlowerPetals();
+      const petals = document.querySelectorAll('.flower-petal');
+      
+      // Reset all elements
+      petals.forEach(petal => {
+        petal.style.opacity = '0';
+      });
+      flowerCenter.style.opacity = '0';
+      flowerCenter.classList.remove('pulse');
+      flowerStem.style.height = '0';
+      
+      // Show flower container
+      flowerContainer.style.display = 'block';
+      
+      // Animate stem growth
+      setTimeout(() => {
+        flowerStem.style.transition = 'height 1.5s ease';
+        flowerStem.style.height = '150px';
+      }, 300);
+      
+      // Animate petals blooming
+      setTimeout(() => {
+        petals.forEach((petal, index) => {
+          setTimeout(() => {
+            petal.style.transition = 'opacity 0.8s ease';
+            petal.style.opacity = '1';
+          }, index * 100);
+        });
+      }, 1800);
+      
+      // Animate flower center
+      setTimeout(() => {
+        flowerCenter.style.transition = 'opacity 0.5s ease';
+        flowerCenter.style.opacity = '1';
+        
+        // Add pulsing animation to center
+        setTimeout(() => {
+          flowerCenter.classList.add('pulse');
+        }, 600);
+      }, 2500);
+
+      // After flower blooms, show spiral loading and redirect
+      setTimeout(() => {
+        showSpiralLoading();
+      }, 4000);
+    }
+
+    // Show spiral loading screen
+    function showSpiralLoading() {
+      document.getElementById('mainContainer').style.display = 'none';
+      document.getElementById('spiralLoading').style.display = 'flex';
+      
+      // Simulate loading time then redirect
+      setTimeout(() => {
+        // Redirect to your gallery HTML file
+        window.location.href = 'four_pics.html'; // Change this to your actual gallery file name
+      }, 3000);
+    }
+
+    // Main check user function
+    function checkUser() {
+      const input = document.getElementById("username").value;
+      const errorBox = document.getElementById("errorBox");
+      const successBox = document.getElementById("successBox");
+      const loadingSection = document.getElementById("loadingSection");
+      const progressBar = document.getElementById("progressBar");
+      const inputBox = document.getElementById("inputBox");
+      const loadingImageContainer = document.getElementById("loadingImageContainer");
+      const pageTitle = document.querySelector("h2");
+      const welcomeMessage = document.getElementById("welcomeMessage");
+      const flowerContainer = document.getElementById("flowerContainer");
+
+      // valid keywords
+      const valid = ["dom", "dominic"];
+
+      // check if input contains any valid keyword
+      let isValid = valid.some((keyword) => input.toLowerCase().includes(keyword));
+
+      if (isValid) {
+        // hide error box and input box
+        errorBox.style.display = "none";
+        inputBox.style.display = "none";
+
+        // show success message only briefly
+        successBox.style.display = "block";
+        document.getElementById("successMsg").innerText = "Access granted!";
+
+        // AFTER 4 SECONDS DELAY, hide success box and show loading
+        setTimeout(() => {
+          successBox.style.display = "none";
+          pageTitle.style.display = "none";
+          loadingSection.style.display = "flex";
+
+          // Add loading GIF
+          loadingImageContainer.innerHTML = '<img src="https://media.tenor.com/amZ5wxLGUEoAAAAi/hugging-heart-snoopy.gif" alt="Loading..." />';
+
+          // start progress bar from 0
+          progressBar.style.width = "0%";
+          progressBar.innerText = "0%";
+
+          let width = 0;
+          let interval = setInterval(() => {
+            if (width >= 100) {
+              clearInterval(interval);
+              loadingSection.style.display = "none";
+              welcomeMessage.innerText = `Welcome, ${input}!`;
+              welcomeMessage.style.display = "block";
+              bloomFlower();
+            } else {
+              width++;
+              progressBar.style.width = width + "%";
+              progressBar.innerText = width + "%";
+            }
+          }, 30);
+        }, 3000); // 4000ms = 4 seconds delay
+
+      } else {
+        // hide success box, loading screen and loading image container
+        successBox.style.display = "none";
+        loadingSection.style.display = "none";
+        welcomeMessage.style.display = "none";
+        if(flowerContainer) flowerContainer.style.display = "none";
+
+        // show error box
+        document.getElementById("errorMsg").innerText = "BAWAL KA DITO!!!";
+        errorBox.style.display = "block";
+
+        // make sure title and input box visible again (in case user tries again)
+        pageTitle.style.display = "block";
+        inputBox.style.display = "flex";
+      }
+    }
+
+    // Initialize the page
+    window.onload = function() {
+      createHearts();
+    };
+  </script>
+</body>
+</html>
