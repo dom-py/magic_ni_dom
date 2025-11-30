@@ -356,8 +356,7 @@
 </head>
 <body>
   <div class="hearts-container" id="heartsContainer"></div>
-  
-  <!-- Main Username Checker -->
+
   <div class="container" id="mainContainer">
     <h2 class="floating">what's your name?</h2>
 
@@ -366,19 +365,16 @@
       <button onclick="checkUser()">Submit</button>
     </div>
 
-    <!-- Error section -->
     <div id="errorBox" class="messageBox">
       <p id="errorMsg"></p>
       <img id="errorImg" src="https://media1.tenor.com/m/nb5wfv9EcJIAAAAC/argh-snoopy.gif" alt="Error Image" />
     </div>
 
-    <!-- Success section -->
     <div id="successBox" class="messageBox">
       <p id="successMsg"></p>
       <img id="successImg" src="https://media1.tenor.com/m/Vv0sQuf90sIAAAAC/snoopy.gif" alt="Success Image" />
     </div>
 
-    <!-- Loading section -->
     <div class="loading-section" id="loadingSection">
       <div id="loadingImageContainer"></div>
       <div id="loadingScreen">
@@ -386,27 +382,22 @@
       </div>
     </div>
 
-    <!-- Welcome message -->
     <div id="welcomeMessage"></div>
 
-    <!-- Flower bloom container -->
     <div id="flowerContainer">
       <div class="flower-stem"></div>
       <div class="flower-center"></div>
     </div>
   </div>
 
-  <!-- Spiral Loading Screen -->
   <div id="spiralLoading">
     <div class="spiral"></div>
     <div class="loading-text">Loading...</div>
   </div>
 
   <script>
-    // SVG heart path
     const heartPath = "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z";
 
-    // Create floating hearts
     function createHearts() {
       const heartsContainer = document.getElementById('heartsContainer');
       const heartCount = 100;
@@ -415,76 +406,60 @@
         createSingleHeart();
       }
     }
-    
-    // Create a single heart
+
     function createSingleHeart() {
       const heartsContainer = document.getElementById('heartsContainer');
-      
-      // Create SVG element
+
       const svgNS = "http://www.w3.org/2000/svg";
       const heartSvg = document.createElementNS(svgNS, "svg");
       heartSvg.classList.add("svg-heart");
-      
-      // Set SVG attributes
+
       const size = Math.random() * 30 + 15;
       heartSvg.setAttribute("width", size);
       heartSvg.setAttribute("height", size);
       heartSvg.setAttribute("viewBox", "0 0 24 24");
-      
-      // Create path for heart shape
+
       const path = document.createElementNS(svgNS, "path");
       path.setAttribute("d", heartPath);
       
-      // Random pink color with adjustable opacity
       const opacity = Math.random() * 0.7 + 0.3;
       const pinkShades = ["#ff66b2", "#ff3385", "#ff99cc", "#ff4d94", "#ff80b3"];
       const randomColor = pinkShades[Math.floor(Math.random() * pinkShades.length)];
       
       path.setAttribute("fill", randomColor);
       path.setAttribute("opacity", opacity);
-      
-      // Add path to SVG
+
       heartSvg.appendChild(path);
-      
-      // Random position across the width
+
       const leftPos = Math.random() * 100;
       heartSvg.style.left = leftPos + 'vw';
-      
-      // Start from top (above the viewport)
+
       heartSvg.style.top = '-50px';
-      
-      // Random animation duration
+
       const duration = Math.random() * 8 + 6;
       heartSvg.style.animationDuration = duration + 's';
-      
-      // Random delay
+
       const delay = Math.random() * 5;
       heartSvg.style.animationDelay = delay + 's';
       
       heartsContainer.appendChild(heartSvg);
-      
-      // Remove heart after animation completes and create a new one
+
       setTimeout(() => {
         heartSvg.remove();
         createSingleHeart();
       }, (duration + delay) * 1000);
     }
 
-    // Create flower petals
     function createFlowerPetals() {
       const flowerContainer = document.getElementById('flowerContainer');
       const petalCount = 8;
-      
-      // Clear any existing petals
       const existingPetals = flowerContainer.querySelectorAll('.flower-petal');
       existingPetals.forEach(petal => petal.remove());
-      
-      // Create new petals
+
       for (let i = 0; i < petalCount; i++) {
         const petal = document.createElement('div');
         petal.classList.add('flower-petal');
-        
-        // Position petals in a circle around the center
+
         const angle = (360 / petalCount) * i;
         petal.style.transform = `rotate(${angle}deg)`;
         
@@ -492,34 +467,28 @@
       }
     }
 
-    // Animate flower bloom
     function bloomFlower() {
       const flowerContainer = document.getElementById('flowerContainer');
       const flowerCenter = document.querySelector('.flower-center');
       const flowerStem = document.querySelector('.flower-stem');
-      
-      // Create petals first
+
       createFlowerPetals();
       const petals = document.querySelectorAll('.flower-petal');
-      
-      // Reset all elements
+
       petals.forEach(petal => {
         petal.style.opacity = '0';
       });
       flowerCenter.style.opacity = '0';
       flowerCenter.classList.remove('pulse');
       flowerStem.style.height = '0';
-      
-      // Show flower container
+
       flowerContainer.style.display = 'block';
-      
-      // Animate stem growth
+
       setTimeout(() => {
         flowerStem.style.transition = 'height 1.5s ease';
         flowerStem.style.height = '150px';
       }, 300);
-      
-      // Animate petals blooming
+
       setTimeout(() => {
         petals.forEach((petal, index) => {
           setTimeout(() => {
@@ -528,37 +497,30 @@
           }, index * 100);
         });
       }, 1800);
-      
-      // Animate flower center
+
       setTimeout(() => {
         flowerCenter.style.transition = 'opacity 0.5s ease';
         flowerCenter.style.opacity = '1';
-        
-        // Add pulsing animation to center
+
         setTimeout(() => {
           flowerCenter.classList.add('pulse');
         }, 600);
       }, 2500);
 
-      // After flower blooms, show spiral loading and redirect
       setTimeout(() => {
         showSpiralLoading();
       }, 4000);
     }
 
-    // Show spiral loading screen
     function showSpiralLoading() {
       document.getElementById('mainContainer').style.display = 'none';
       document.getElementById('spiralLoading').style.display = 'flex';
       
-      // Simulate loading time then redirect
       setTimeout(() => {
-        // Redirect to your gallery HTML file
-        window.location.href = 'four_pics.html'; // Change this to your actual gallery file name
+        window.location.href = 'gallery.html';
       }, 3000);
     }
 
-    // Main check user function
     function checkUser() {
       const input = document.getElementById("username").value;
       const errorBox = document.getElementById("errorBox");
@@ -571,31 +533,24 @@
       const welcomeMessage = document.getElementById("welcomeMessage");
       const flowerContainer = document.getElementById("flowerContainer");
 
-      // valid keywords
-      const valid = ["dom", "dominic"];
+      const valid = ["eri", "erica", "deathsync" ];
 
-      // check if input contains any valid keyword
       let isValid = valid.some((keyword) => input.toLowerCase().includes(keyword));
 
       if (isValid) {
-        // hide error box and input box
         errorBox.style.display = "none";
         inputBox.style.display = "none";
 
-        // show success message only briefly
         successBox.style.display = "block";
         document.getElementById("successMsg").innerText = "Access granted!";
 
-        // AFTER 4 SECONDS DELAY, hide success box and show loading
         setTimeout(() => {
           successBox.style.display = "none";
           pageTitle.style.display = "none";
           loadingSection.style.display = "flex";
 
-          // Add loading GIF
           loadingImageContainer.innerHTML = '<img src="https://media.tenor.com/amZ5wxLGUEoAAAAi/hugging-heart-snoopy.gif" alt="Loading..." />';
 
-          // start progress bar from 0
           progressBar.style.width = "0%";
           progressBar.innerText = "0%";
 
@@ -613,29 +568,25 @@
               progressBar.innerText = width + "%";
             }
           }, 30);
-        }, 3000); // 4000ms = 4 seconds delay
+        }, 3000);
 
       } else {
-        // hide success box, loading screen and loading image container
         successBox.style.display = "none";
         loadingSection.style.display = "none";
         welcomeMessage.style.display = "none";
         if(flowerContainer) flowerContainer.style.display = "none";
 
-        // show error box
         document.getElementById("errorMsg").innerText = "BAWAL KA DITO!!!";
         errorBox.style.display = "block";
 
-        // make sure title and input box visible again (in case user tries again)
         pageTitle.style.display = "block";
         inputBox.style.display = "flex";
       }
     }
 
-    // Initialize the page
     window.onload = function() {
       createHearts();
     };
   </script>
 </body>
-</html>
+        </html>
