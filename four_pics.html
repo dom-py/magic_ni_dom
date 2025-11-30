@@ -318,23 +318,19 @@
 </head>
 <body>
 
-<!-- Floating hearts background -->
 <div class="hearts-container" id="hearts-container"></div>
 
 <div class="container">
   <div class="puzzle-info" id="puzzle-info"></div>
   
   <div class="puzzle" id="puzzle-container">
-    <!-- Images Section -->
     <div class="image-grid" id="image-grid"></div>
-    
-    <!-- Answer Section (Below Images) -->
+
     <div class="answer-section">
       <div class="answer-title">Answer</div>
       <div class="answer-slots" id="answer-slots"></div>
     </div>
-    
-    <!-- Selection Section (Below Answer) -->
+ 
     <div class="selection-section">
       <div class="selection-title">Select Letters</div>
       <div class="letter-bank" id="letter-bank"></div>
@@ -346,61 +342,59 @@
 
 <script>
 (() => {
-  // --- Game Data ---
   const puzzles = [
     {
       word: "powered",
       images: [
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHvjDeoGP9jPjdNccECrkR6hipsj5F_rG5wkoWNLZFjw&s=10", // Electrical
-        "https://dvzpv6x5302g1.cloudfront.net/AcuCustom/Sitename/DAM/075/MTU_16V_4000_Gas_EngineWEB.jpg", // Lightning
-        "https://www.shutterstock.com/shutterstock/videos/30287746/thumb/1.jpg?ip=x480", // Battery
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe9rA-HUUcbRgFXy8jkt0CiMcr2GFDKJrqVS9uWyYLcw&s=10" // Engine
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHvjDeoGP9jPjdNccECrkR6hipsj5F_rG5wkoWNLZFjw&s=10",
+        "https://dvzpv6x5302g1.cloudfront.net/AcuCustom/Sitename/DAM/075/MTU_16V_4000_Gas_EngineWEB.jpg",
+        "https://www.shutterstock.com/shutterstock/videos/30287746/thumb/1.jpg?ip=x480",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe9rA-HUUcbRgFXy8jkt0CiMcr2GFDKJrqVS9uWyYLcw&s=10"
       ],
       letters: "p w o e r e d".split(" "),
     },
     {
       word: "bandage",
       images: [
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5xQLEEUO1GjRz3yML3MyxxmfS722V_jthg50-eItoWw&s=10", // Medical
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZRfQQ3DTx2w1PtzQJrQlLysfQPFaQWcybb_cBU89uSA&s=10", // Wound
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGv8qVoTV_1My-XjOYocIBD3ZO1AV8KWGhYHl4pp3WMA&s=10", // First aid
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL4EjEHI3bHfDKE8cAHABLMLPQevHq8HOCWOf66Dl0gw&s=10" // Bandage
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5xQLEEUO1GjRz3yML3MyxxmfS722V_jthg50-eItoWw&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZRfQQ3DTx2w1PtzQJrQlLysfQPFaQWcybb_cBU89uSA&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGv8qVoTV_1My-XjOYocIBD3ZO1AV8KWGhYHl4pp3WMA&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL4EjEHI3bHfDKE8cAHABLMLPQevHq8HOCWOf66Dl0gw&s=10"
       ],
       letters: "b a n d a g e".split(" "),
     },
     {
       word: "kite",
       images: [
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRpN09fYdIFbauqwqiroIhl96fu4ulG7eUFFDwmpcYRw&s=10", // Kite
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU0jfz3He22uRGKQlfwc66EVWCdcrNFZZipbkWR65ExA&s=10", // Wind
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLapl06nsr-OqZq3tOmQ6e43FU06apRNqQEtpWJpJqRg&s=10", // String
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgaxbVcqx3W-wBLRUYzM0gQ5KY8b4ZZ81jOKZWNl9rbg&s=10" // Sky
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRpN09fYdIFbauqwqiroIhl96fu4ulG7eUFFDwmpcYRw&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU0jfz3He22uRGKQlfwc66EVWCdcrNFZZipbkWR65ExA&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLapl06nsr-OqZq3tOmQ6e43FU06apRNqQEtpWJpJqRg&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgaxbVcqx3W-wBLRUYzM0gQ5KY8b4ZZ81jOKZWNl9rbg&s=10"
       ],
       letters: "k i t e".split(" "),
     },
     {
       word: "mail",
       images: [
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxuvPCkvioMwS5hFIezDck4tMOo0PTlUuh8CDUwMurgg&s=10", // Envelope
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRx7mARsDhvOGd2cwnmM0fHtXI-FjPybnNPsnGKLUFIVA&s=10", // Post office
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQU-RZZfbI7jHtNpiI21hw5lFD30vJvmsi0806Ad3WOQ&s=10", // Stamp
-        "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/7f/98/a8/7f98a83d-45fb-a98d-335b-57ed02adf37c/logo_gmail_2020q4_color-0-1x_U007emarketing-0-0-0-7-0-0-0-0-85-220-0.png/1200x630wa.png" // Mailbox
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxuvPCkvioMwS5hFIezDck4tMOo0PTlUuh8CDUwMurgg&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRx7mARsDhvOGd2cwnmM0fHtXI-FjPybnNPsnGKLUFIVA&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQU-RZZfbI7jHtNpiI21hw5lFD30vJvmsi0806Ad3WOQ&s=10",
+        "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/7f/98/a8/7f98a83d-45fb-a98d-335b-57ed02adf37c/logo_gmail_2020q4_color-0-1x_U007emarketing-0-0-0-7-0-0-0-0-85-220-0.png/1200x630wa.png"  
       ],
       letters: "m a i l".split(" "),
     },
     {
       word: "wagon",
       images: [
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6BO3Pkkxy8EnmUH5D1B3Gvw71iZIT9zg9Th8fG8_89Q&s=10", // Cart
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy0PsSlaQxvCCjg1KqsXnLOo5PrCPOk85kg-hXSYE8ng&s=10", // Train wagon
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdVriw2tGPwuyEiu7ykTgxIvxphbrFPJb2pxo0zlZf4g&s=10", // Wooden vehicle
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA8ic0FlQ5PVOCDI-MU9ctB92FQ48yHcu4B-dmvSmfmQ&s=10" // Railway car
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6BO3Pkkxy8EnmUH5D1B3Gvw71iZIT9zg9Th8fG8_89Q&s=10", 
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy0PsSlaQxvCCjg1KqsXnLOo5PrCPOk85kg-hXSYE8ng&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdVriw2tGPwuyEiu7ykTgxIvxphbrFPJb2pxo0zlZf4g&s=10",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA8ic0FlQ5PVOCDI-MU9ctB92FQ48yHcu4B-dmvSmfmQ&s=10"
       ],
       letters: "w a g o n".split(" "),
     }
   ];
 
-  // DOM elements
   const imageGrid = document.getElementById("image-grid");
   const letterBank = document.getElementById("letter-bank");
   const answerSlots = document.getElementById("answer-slots");
@@ -408,12 +402,10 @@
   const finalMessage = document.getElementById("final-message");
   const heartsContainer = document.getElementById("hearts-container");
 
-  // Game state
   let currentPuzzle = 0;
   let slotToBankMap = {};
   let answerLetters = [];
 
-  // Create floating hearts
   function createHearts() {
     const heartSvg = '<svg width="24" height="24" viewBox="0 0 24 24" fill="#ff66b2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
     
@@ -433,25 +425,23 @@
     }
   }
 
-  // Initialize hearts
   createHearts();
   setInterval(createHearts, 5000);
 
   function setupPuzzle(index) {
     const p = puzzles[index];
     
-    // Clear previous puzzle
+
     imageGrid.innerHTML = "";
     letterBank.innerHTML = "";
     answerSlots.innerHTML = "";
     slotToBankMap = {};
     answerLetters = [];
-    
-    // Update puzzle info
-    puzzleInfo.textContent = `Puzzle ${index + 1} of 5`;
+
+    puzzleInfo.textContent = `${index + 1} out of 5`;
     finalMessage.style.display = 'none';
 
-    // Create image boxes with actual images
+    
     p.images.forEach((imageUrl, i) => {
       const imageContainer = document.createElement("div");
       imageContainer.className = "image-box";
@@ -465,11 +455,9 @@
       imageGrid.appendChild(imageContainer);
     });
 
-    // Create letter bank (letters from word + random letters)
     const wordLetters = [...p.letters];
     const extraLetters = [];
-    
-    // Add random letters to make 14 total
+
     while (wordLetters.length + extraLetters.length < 14) {
       const randomChar = String.fromCharCode(97 + Math.floor(Math.random() * 26));
       if (!wordLetters.includes(randomChar)) {
@@ -479,8 +467,7 @@
     
     const allLetters = [...wordLetters, ...extraLetters];
     const shuffled = shuffleArray([...allLetters]);
-
-    // Create letter bank elements
+    
     shuffled.forEach((letter, index) => {
       const div = document.createElement("div");
       div.className = "letter";
@@ -490,7 +477,6 @@
       letterBank.appendChild(div);
     });
 
-    // Create answer slots
     for (let i = 0; i < p.word.length; i++) {
       const slot = document.createElement("div");
       slot.className = "slot empty";
@@ -503,18 +489,15 @@
 
   function onLetterClick(bankIndex) {
     const letterDiv = letterBank.children[bankIndex];
-    
-    // If letter is already used, return it
+
     if (letterDiv.classList.contains('used')) {
       returnLetter(bankIndex);
       return;
     }
 
-    // Find first empty slot
     const emptySlotIndex = answerLetters.indexOf("");
     if (emptySlotIndex === -1) return;
 
-    // Place letter in slot
     answerLetters[emptySlotIndex] = letterDiv.textContent.toLowerCase();
     slotToBankMap[emptySlotIndex] = bankIndex;
     letterDiv.classList.add('used');
@@ -529,8 +512,7 @@
 
   function returnLetter(bankIndex) {
     const letterDiv = letterBank.children[bankIndex];
-    
-    // Find which slot this letter is in
+
     let slotIndex = -1;
     for (let i = 0; i < answerLetters.length; i++) {
       if (slotToBankMap[i] === bankIndex) {
@@ -548,7 +530,6 @@
   }
 
   function updateUI() {
-    // Update answer slots display
     for (let i = 0; i < answerLetters.length; i++) {
       const slot = answerSlots.children[i];
       slot.textContent = answerLetters[i].toUpperCase();
@@ -562,14 +543,12 @@
   }
 
   function checkAutoValidate() {
-    // Check if all slots are filled
     if (answerLetters.includes("")) return;
     
     const userAnswer = answerLetters.join("").toLowerCase();
     const correctAnswer = puzzles[currentPuzzle].word.toLowerCase();
     
     if (userAnswer === correctAnswer) {
-      // Correct answer - show success and move to next puzzle
       for (let i = 0; i < answerSlots.children.length; i++) {
         answerSlots.children[i].classList.add("correct");
       }
@@ -583,7 +562,6 @@
         }
       }, 1000);
     } else {
-      // Wrong answer - show error animation
       for (let i = 0; i < answerSlots.children.length; i++) {
         answerSlots.children[i].classList.add("error");
       }
@@ -600,10 +578,9 @@
     document.querySelector('.puzzle').style.display = 'none';
     finalMessage.style.display = 'block';
     finalMessage.innerHTML = "nice! tandaan mo yun";
-    
-    // Redirect to another HTML page after 3 seconds
+
     setTimeout(() => {
-      window.location.href = 'letter.html'; // Change this to your target HTML file
+      window.location.href = 'gallery.html'; 
     }, 2000);
   }
 
@@ -615,9 +592,8 @@
     return array;
   }
 
-  // Initialize the first puzzle
   setupPuzzle(currentPuzzle);
 })();
 </script>
 </body>
-</html>
+ </html>
